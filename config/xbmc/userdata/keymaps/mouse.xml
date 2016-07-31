@@ -1,0 +1,56 @@
+<keymap>
+  <global>
+	<keyboard>
+		<k>audionextlanguage</k>
+	</keyboard>
+    <mouse>
+      <middleclick>togglefullscreen</middleclick>
+      <leftclick>leftclick</leftclick>
+      <rightclick>rightclick</rightclick>
+      <middleclick>middleclick</middleclick>
+      <doubleclick id="0">doubleclick</doubleclick>
+      <longclick id="0">contextmenu</longclick>
+
+      <wheeldown>wheeldown</wheeldown>
+      <wheelup>wheelup</wheelup>
+      <mousedrag>mousedrag</mousedrag>
+      <mousemove>mousemove</mousemove>
+    </mouse>
+  </global>
+  <Home>
+	<mouse>
+      <middleclick>togglefullscreen</middleclick>	
+	</mouse>
+  </Home>
+  <MyVideoLibrary>
+	<mouse>
+      <middleclick>togglefullscreen</middleclick>	
+	</mouse>
+  </MyVideoLibrary>
+  <FullscreenVideo>
+    <mouse>
+      <middleclick>togglefullscreen</middleclick>
+      <wheelup>VolumeUp</wheelup>
+      <wheeldown>VolumeDown</wheeldown>
+    </mouse>
+  </FullscreenVideo>
+  <VideoOSD>
+    <mouse>
+      <middleclick>togglefullscreen</middleclick>
+      <wheelup>VolumeUp</wheelup>
+      <wheeldown>VolumeDown</wheeldown>
+      <x1click>VolumeUp</x1click>
+      <x2click>VolumeDown</x2click>
+      <x3click>VolumeUp</x3click>
+      <x4click>VolumeDown</x4click>
+    </mouse>
+  </VideoOSD>
+  <SlideShow>
+    <mouse>
+      <leftclick>Pause</leftclick>
+      <rightclick>PreviousMenu</rightclick>
+      <wheelup>PreviousPicture</wheelup>
+      <wheeldown>NextPicture</wheeldown>
+    </mouse>
+  </SlideShow>
+</keymap>

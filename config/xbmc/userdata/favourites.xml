@@ -1,0 +1,10 @@
+<favourites>
+    <favourite name="torrents">ActivateWindow(10025,&quot;ftp://pistore:pistore@192.168.1.25:21/d/torrents/&quot;)</favourite>
+    <favourite name="torrentssftp">ActivateWindow(10025,&quot;sftp://pistore:pistore@192.168.1.25:22/media/flashka/store/d/torrents/&quot;)</favourite>
+    <favourite name="temp">ActivateWindow(10025,&quot;D:\\temp\\&quot;)</favourite>
+    <favourite name="TwitchTV" thumb="C:\Documents and Settings\Ljoha\Application Data\XBMC\addons\plugin.video.twitch\icon.png">ActivateWindow(10025,&quot;plugin://plugin.video.twitch/&quot;)</favourite>
+    <favourite name="BATMAN">ActivateWindow(10025,&quot;ftp://pistore:pistore@192.168.1.25:21/d/torrents/BATMAN/&quot;)</favourite>
+    <favourite name="tick">ActivateWindow(10025,&quot;ftp://pistore:pistore@192.168.1.25:21/d/torrents/tick/&quot;)</favourite>
+    <favourite name="Torchwood">ActivateWindow(10025,&quot;ftp://pistore:pistore@192.168.1.25:21/d/torrents/Torchwood/&quot;)</favourite>
+    <favourite name="Bron.s02.HDTV720p.BaibaKo.tv">ActivateWindow(10025,&quot;ftp://pistore:pistore@192.168.1.25:21/d/torrents/Bron.s02.HDTV720p.BaibaKo.tv/&quot;)</favourite>
+</favourites>

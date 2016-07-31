@@ -1,0 +1,6 @@
+option batch abort
+option confirm off
+open pi
+echo Putting %1% to %2%
+put -speed=345 -delete "%1%" "%2%"
+exit

@@ -1,0 +1,10 @@
+option
+option transfer
+option batch abort
+option confirm off
+option reconnecttime off
+option
+open sftp://oracle:oracle@10.50.10.2 -hostkey="*"
+option
+synchronize local d:\synch /home/oracle/Middleware/user_projects/domains/osb_domain/servers/soa_server1/logs/owsm/msglogging
+exit

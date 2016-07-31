@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<!-- saved from url=(0065)http://docs.webix.com/samples/01_layout/12_responsive_hidden.html -->
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=KOI8-U">
+    <link rel="stylesheet" href="./webix/webix.css" type="text/css" media="screen" charset="utf-8">
+    <script src="./webix/webix.js" type="text/javascript" charset="utf-8"></script>
+    <style type="text/css"></style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="./jstorage.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./underscore-min.js" type="text/javascript" charset="utf-8"></script>
+    <!-- 1. Include the client library -->
+    <script src="https://cdn.import.io/js/2.0.0/importio.js"></script>
+
+    <title>Responsive Layout - Hidden cells</title>
+    <style type="text/css" media="screen">#datatable1401690912332 .webix_cell {
+        height: 34px;
+        line-height: 34px;
+    }</style>
+    <style type="text/css" media="screen">#datatable1401690912332 .webix_hcell {
+        max-height: 45px;
+        line-height: 45px;
+    }</style>
+    <style type="text/css" media="screen">html, body {
+        height: 100%;
+    }</style>
+</head>
+<body class=" webix_full_screen">
+<script type="text/javascript" charset="utf-8">
+    var showsData = [
+        {
+            id: "thisishorosho", guid: "99267a7a-7887-4df9-870f-4e6cd255f249", url: "http://www.youtube.com/user/ThisIsHorosho/videos?sort=dd&view=0&flow=list&live_view=500",
+            format: function(importObj) {
+                return {
+                    url: importObj.url.replace(/.*\?v=/, "//www.youtube.com/embed/"),
+                    name: importObj.name.replace("This is Хорошо - ", "")
+                }
+            }
+        },
+        { id: "100500", guid: "672508f5-b15f-4398-9759-081fa2612503", url: "http://carambatv.ru/humor/100500/" }
+    ]
+
+    webix.ui({
+        type: "space", responsive: true, cols: [
+            { rows: [
+                {
+                    view: "datatable",
+                    id: "shows",
+                    columns: [
+                        { id: "id", header: "name", fillspace: 1 },
+                        {
+                            id: "watch", header: "w", width: 30,
+                            template: function (obj) {
+                                var episodesWatchedAndCount = episodeWatchedAndCount(obj.url)
+                                return episodesWatchedAndCount.count - episodesWatchedAndCount.watched
+                            }
+                        }
+                    ],
+                    select: true, scroll: false, width: 200 },
+                {
+                    view: "datatable",
+                    id: "episodes",
+                    columns: [
+                        { id: "name", fillspace: 1 },
+                        {
+                            id: "watched", header: "w", width: 30,
+                            template: function (obj) {
+                                return isEpisodeWatched(obj.id) ? "Y" : ""
+                            }
+                        }
+                    ],
+                    select: "cell",
+                    width: 200
+                }
+            ]},
+            {
+                view: "iframe",
+                id: "frame-body",
+                src: "",
+//                waitMessage: true,
+                minWidth: 300
+            }
+        ]
+    }).show();
+
+    var showsCollection = new webix.DataCollection({
+        data: showsData
+    }), episodesCollection = new webix.DataCollection({})
+    $$('episodes').data.sync(episodesCollection);
+    $$('shows').data.sync(showsCollection);
+
+
+    var lastUpdateEpisodeCollectionUrl
+    $$('shows').attachEvent("onAfterSelect", function (row) {
+        episodesCollection.clearAll()
+        $$('episodes').clearAll() //fix multiple selection glitch
+        var selectedShow = _.findWhere(showsData, { id: row.row });
+        episodesCollection.data_setter($.jStorage.get(selectedShow.url))
+        lastUpdateEpisodeCollectionUrl && $.jStorage.stopListening(lastUpdateEpisodeCollectionUrl)
+        lastUpdateEpisodeCollectionUrl = selectedShow.url
+        $.jStorage.listenKeyChange(selectedShow.url, updateEpisodesCollection)
+        var firstId = $$('episodes').getFirstId()
+        firstId && $$('episodes').select(firstId, "name") //in case episodes are not yet populated
+    });
+    $$('episodes').attachEvent("onBeforeSelect", function (row) {
+        if(row.column == "watched") {
+            localStorage.setItem(row.row, !isEpisodeWatched(row.row)) //not using row.id because it has postfix _watched
+            showsCollection.refresh()
+            episodesCollection.refresh()
+            return false
+        }
+    });
+    $$('episodes').attachEvent("onAfterSelect", function (row) {
+        $$('frame-body').define("src", row.row); //not using row.id because it has postfix
+    });
+
+    function isEpisodeWatched(url) {
+        return localStorage.getItem(url) == "true" ? true : false;
+    }
+
+    function episodeWatchedAndCount(url) {
+        var episodes = $.jStorage.get(url)
+        var watched = episodes ? episodes.reduce(function(count, episode) {
+            return isEpisodeWatched(episode.id) ? ++count : count
+        }, 0) : 0
+        return { watched: watched, count: episodes ? episodes.length : 0 }
+    }
+
+    function updateEpisodesCollection(url) {
+        var episodesData = episodesCollection.data, episodes = $.jStorage.get(url)
+        var newEpisodes = _.difference(_.pluck(episodes, 'id'), episodesData.order)
+        episodesData.order = newEpisodes.concat(episodesData.order)
+        _.extend(episodesData.pull, _.object(newEpisodes, episodes))
+        showsCollection.refresh()
+        episodesData.refresh() //because refreshing collection will only refresh currently selected show watched(w) count
+    }
+
+    function updateEpisodesImport(show) {
+        importio.query({
+            "connectorGuids": [
+                show.guid
+            ],
+            "input": {
+                "webpage/url": show.url
+            }
+        }, { "data": function (importResponse) {
+            var importData = importResponse.map(function(importResponseObj) { return importResponseObj.data })
+            show.format && (importData = importData.map(show.format))
+            var webixData = importData.map(function(importObj) { return { id: importObj.url, name: importObj.name } } )
+            var oldEpisodes = $.jStorage.get(show.url)
+            oldEpisodes = oldEpisodes ? oldEpisodes : []
+            var newEpisodes = _.partition(webixData, function (episode) {
+                return _.findWhere(oldEpisodes, { id: episode.id })
+            })[1] //[0] - will return union, [1] - will return difference
+            var mergedEpisodes = newEpisodes.concat(oldEpisodes)
+            $.jStorage.set(show.url, mergedEpisodes)
+            newEpisodes.length && console.log("%s show has %d new episodes", show.id, newEpisodes.length)
+        },
+            "done": function() {
+                console.log("DONE")
+            }
+        });
+    }
+
+    importio.init({
+        "auth": {
+            "userGuid": "0ead326f-2a60-4072-8c3e-3f3bbb0197ba",
+            "apiKey": "rete8fUcPwwXrC+MJyfbWugxpwtQL3wfxBk6H4+E4f5LH6wpbPSDhEvA8LVFJemsSHbc3wJipF3akDstLykygQ=="
+        },
+//        "host": "import.io"
+    });
+
+//    updateEpisodesImport(showsData[0])
+    showsData.forEach(function(show) {
+        updateEpisodesImport(show)
+    })
+
+    $$('shows').select($$('shows').getFirstId())
+</script>
+</body>
+</html>

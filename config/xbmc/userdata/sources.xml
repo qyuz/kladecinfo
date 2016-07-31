@@ -1,0 +1,29 @@
+<sources>
+    <programs>
+        <default pathversion="1"></default>
+    </programs>
+    <video>
+        <default pathversion="1"></default>
+        <source>
+            <name>temp</name>
+            <path pathversion="1">D:\temp\</path>
+        </source>
+        <source>
+            <name>storesftp</name>
+            <path pathversion="1">sftp://pistore:pistore@192.168.1.25:22/media/flashka/store/</path>
+        </source>
+        <source>
+            <name>storeftp</name>
+            <path pathversion="1">ftp://pistore:pistore@192.168.1.25:21/</path>
+        </source>
+    </video>
+    <music>
+        <default pathversion="1"></default>
+    </music>
+    <pictures>
+        <default pathversion="1"></default>
+    </pictures>
+    <files>
+        <default pathversion="1"></default>
+    </files>
+</sources>
